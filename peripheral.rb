@@ -1,0 +1,2 @@
+class wPeripheral
+end

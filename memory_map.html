@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Memory Map</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+<h1>Memory Maps</h1>
+<div id="graph"></div>
+<script type="text/javascript">
+    var threated_freq = [];
+    var id;
+    var x;
+    var y;
+    var z;
+    var freq;
+    var fmax;
+    var fmin;
+
+    Plotly.d3.csv('http://localhost:8000/memory_map.csv', function(err, rows){
+        function unpack(rows, key) {
+            return rows.map(function(row)
+            { return row[key]; });}
+
+        id = unpack(rows, 'id').map(function(item) { return parseInt(item, 10);});;
+        x = unpack(rows, 'x').map(function(item) { return parseInt(item, 10);});;
+        y = unpack(rows, 'y').map(function(item) { return parseInt(item, 10);});;
+        z = unpack(rows, 'z').map(function(item) { return parseInt(item, 10);});;
+        freq = unpack(rows, 'freq').map(function(item) { return parseFloat(item, 10);});;
+
+        fmax = Math.max.apply(null, freq)
+        fmin = Math.min.apply(null, freq)
+
+        for(var i = 0; i<freq.length; i++) {
+            threated_freq.push((freq[i] * 100)/fmax)
+        }
+
+
+        var trace1 = {
+            id: id.map(function (item) {
+                return item.toString();
+            }),
+            x: x,
+            y: y,
+            z: z,
+            freq: freq,
+            text: freq.map(function (item) {
+                return item.toString();
+            }),
+            mode: 'markers',
+            marker: {
+                size: threated_freq,
+                line: {
+                    width: 0,
+                    opacity: 0
+                },
+                showscale: true,
+                colorbar: {
+                    x: 0,
+                    y: 0
+                },
+                cmax: fmax,
+                cmin: fmin,
+                color: freq,
+                colorscale: 'parula',
+                opacity: 1
+            },
+            hoverinfo: "id+text+x+y+z",
+            type: "scatter3d",
+            name: "Memory Map",
+            showlegend: true,
+            showscale: true
+        };
+
+        var data = [trace1];
+        var layout = {
+            showlegend: true,
+            autosize: true,
+            height: 1000,
+            margin: {
+                l: 0,
+                r: 0,
+                b: 0,
+                t: 0
+            }};
+        Plotly.newPlot('graph', data, layout);
+    });
+</script>
+</body>
+</html>
