@@ -5,7 +5,7 @@
 <body>
 <div id="graph"></div>
 <script type="text/javascript">
-    Plotly.d3.csv('http://localhost:8000/memory_threads.csv', function(err, rows){
+    Plotly.d3.csv('memory_threads.csv', function(err, rows){
         function unpack(rows, key) {
             return rows.map(function(row)
             { return row[key]; }); }
